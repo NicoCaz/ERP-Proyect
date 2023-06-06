@@ -5,6 +5,9 @@ from models import db, User,Client,Category,Product,Bill,BillItem
 from config import ApplicationConfig
 from flask_cors import CORS, cross_origin
 from utilitys import *
+
+
+
 app=Flask(__name__)
 app.config.from_object(ApplicationConfig)
 
@@ -200,7 +203,91 @@ def modify_category():
         })
 
 
+@app.route("/createclient", methods=["POST"])
+def create_client():
+    name = request.json["name"]
+    phone = request.json["phone"]
+    address = request.json["address"]
 
+    client_name = Client.query.filter_by(name=name).first()
+    
+    if client_name  is not(None):
+        return jsonify({"error": "Client already created"}), 401
+ 
+    new_client  = Client(name=name,phone=phone,address=address)
+    db.session.add(new_client)
+    db.session.commit()
+    
+    return jsonify({
+        "id": new_client .id,
+        "phone": new_client.phone,
+        "address":new_client.address
+    })
+
+@app.route("/modifyclient", methods=["POST"])
+def modify_client():
+    old_name=request.json["old_name"]
+    name = request.json["name"]
+    phone = request.json["phone"]
+    address = request.json["address"]
+
+    client= Client.query.filter_by(name=old_name).first()
+    
+    if client  is None:
+        return jsonify({"error": "Client Not created"}), 401
+ 
+    client.name=name
+    client.phone=phone
+    client.address=address
+    db.session.add(client)
+    db.session.commit()
+    
+    return jsonify({
+        "id": client.id,
+        "phone": client.phone,
+        "address":client.address
+    })
+
+
+@app.route("/createbill", methods=["POST"])
+def create_bill():
+    client_name = request.json["client_name"]
+    products = request.json["products"]
+
+    client = Client.query.filter_by(name=client_name).first()
+    
+    if  client is None:
+        return jsonify({"error": "Client not exist"}), 401
+    total_amount=0
+    items=[]
+    new_bill = Bill(
+        client_id=client.id,
+        total_amount=total_amount,
+        timestamp=datetime.utcnow())
+    
+    for product in products:
+        product_name = product['name']
+        cant = product['cant']   
+        product = Product.query.filter_by(name=product_name).first()
+        if product is None:
+            return jsonify({"error": f"Product {product_name} not exist"}), 401
+        item=BillItem(
+            product_id=product.id,
+            quantity=cant,
+            unit_price=product.price
+        )
+        items.append(item)
+        total_amount+=total_amount+product.price
+
+    new_bill.items=items
+    new_bill.total_amount=total_amount
+
+    db.session.add(new_bill)
+    db.session.commit() 
+
+    return jsonify({
+       "message": "Factura creada con exito"
+    })
 
 
 if __name__ == "__main__":

@@ -1,0 +1,13 @@
+{
+    "client_name": "nombre",
+    "products": [
+        {
+            "name": "Cocacola",
+            "cant": "12"
+        },
+        {
+            "name": "Pepsi",
+            "cant": "12"
+        }
+    ]
+}
