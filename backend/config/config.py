@@ -10,6 +10,8 @@ class ApplicationConfig:
     SQLALCHEMY_ECHO= True
     SQLALCHEMY_DATABASE_URI = r"sqlite:///./db.sqlite"
 
+    SERVER_NAME = "localhost:7001"
+
     SESSION_TYPE = "redis"
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True
