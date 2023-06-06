@@ -351,7 +351,7 @@ def update_bill_item(item_id):
 
 
     bill = item.bill
-    bill.total_amount -= (item.old_price * old_quantity)
+    bill.total_amount -= (old_price * old_quantity)
     bill.total_amount += (item.unit_price * new_quantity)
     db.session.commit()
 
