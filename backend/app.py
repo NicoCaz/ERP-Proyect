@@ -35,9 +35,6 @@ def get_current_user():
         "email": user.email
     }) 
 
-
-
-
 @app.route('/register', methods=["POST"])
 def register_user():
     email = request.json["email"]
@@ -59,7 +56,6 @@ def register_user():
         "id": new_user.id,
         "email": new_user.email
     })
-
 
 @app.route("/login", methods=["POST"])
 def login_user():
@@ -86,7 +82,6 @@ def login_user():
 def logout_user():
     session.pop("user_id")
     return "200"
-
 
 @app.route("/createproduct", methods=["POST"])
 def create_product():
@@ -160,13 +155,12 @@ def edit_product():
     })
 
 
-
 @app.route("/createcategory", methods=["POST"])
 def create_category():
     name = request.json["name"]
 
     product_category=Category.query.filter_by(name=name).first()
-    
+ 
     if product_category is not(None):
         return jsonify({"error": "Category already exist"}), 401
     if product_category is None:
@@ -288,6 +282,98 @@ def create_bill():
     return jsonify({
        "message": "Factura creada con exito"
     })
+
+@app.route("/createbillitem", methods=["POST"])
+def create_bill_item():
+    bill_id = request.json["bill_id"]
+    product_id = request.json["product_id"]
+    quantity = request.json["quantity"]
+    unit_price = request.json["unit_price"]
+    
+    bill = Bill.query.get(bill_id)
+
+    if bill is None:
+        return jsonify({"error": "Bill does not exist"}), 401
+
+    product = Product.query.get(product_id)
+
+    if product is None:
+        return jsonify({"error": "Product does not exist"}), 401
+
+    new_item = BillItem(
+        bill_id=bill_id,
+        product_id=product_id,
+        quantity=quantity,
+        unit_price=unit_price
+    )
+
+    db.session.add(new_item)
+    db.session.commit()
+
+
+    bill.total_amount += (unit_price * quantity)
+    db.session.commit()
+
+    return jsonify({"message": "Bill item created successfully"})
+
+
+@app.route("/getbillitem/<item_id>", methods=["GET"])
+def get_bill_item(item_id):
+    item = BillItem.query.get(item_id)
+
+    if item is None:
+        return jsonify({"error": "Item does not exist"}), 401
+
+    item_data = {
+        "id": item.id,
+        "bill_id": item.bill_id,
+        "product_id": item.product_id,
+        "quantity": item.quantity,
+        "unit_price": item.unit_price
+    }
+
+    return jsonify({"item": item_data})
+
+@app.route("/updatebillitem/<item_id>", methods=["PUT"])
+def update_bill_item(item_id):
+    new_quantity = request.json["quantity"]
+    new_price= request.json["price"]
+    item = BillItem.query.get(item_id)
+
+    if item is None:
+        return jsonify({"error": "Item does not exist"}), 401
+
+    old_quantity = item.quantity
+    old_price= item.unit_price
+    item.quantity = new_quantity
+    item.unit_price=new_price
+    db.session.commit()
+
+
+    bill = item.bill
+    bill.total_amount -= (item.old_price * old_quantity)
+    bill.total_amount += (item.unit_price * new_quantity)
+    db.session.commit()
+
+    return jsonify({"message": "Bill item updated successfully"})
+
+
+@app.route("/deletebillitem/<item_id>", methods=["DELETE"])
+def delete_bill_item(item_id):
+    item = BillItem.query.get(item_id)
+
+    if item is None:
+        return jsonify({"error": "Item does not exist"}), 401
+
+
+    bill = item.bill
+    bill.total_amount -= (item.unit_price * item.quantity)
+    db.session.delete(item)
+    db.session.commit()
+
+    return jsonify({"message": "Bill item deleted successfully"})
+
+
 
 
 if __name__ == "__main__":
