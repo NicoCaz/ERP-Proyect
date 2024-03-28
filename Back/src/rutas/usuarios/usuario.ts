@@ -4,7 +4,30 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+export const login = router.get('/', async (req, res) =>   {
+  try {
+    const { Email, Password } = req.body;
+
+    const user = await prisma.usuario.findFirst({
+      where: { Email },
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Credenciales incorrectas' });
+    }
+
+    if (Password != user.Password) {
+      return res.status(401).json({ message: 'Credenciales incorrectas' });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Error al procesar la solicitud:', error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+export const register = router.put('/', async (req, res) =>  {
   try {
     const { Email, Password } = req.body;
 
@@ -20,12 +43,10 @@ router.post('/', async (req, res) => {
       return res.status(409).json({ message: 'Usuario existente' });
     }
 
-
-
     const newUser = await prisma.usuario.create({
       data: {
         Email,
-        Password: Password
+        Password: Password,
       },
     });
 
@@ -41,4 +62,3 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-export default router;

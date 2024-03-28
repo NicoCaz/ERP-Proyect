@@ -1,10 +1,10 @@
 import axios from "axios";
 import { Customer } from "../../types/customer";
-import { customerUrl } from "./config";
+import { baseURL } from "./config";
 
 export const getCustomersFromDataBase = async () => {
   try {
-    const response = await axios.get(customerUrl + "/get");
+    const response = await axios.get(baseURL + "/get");
     return response.data;
   } catch (error) {
     console.error("Error en getCustomers:", error);
@@ -16,7 +16,7 @@ export const addCustomerFromDataBase = async (
   customer: Customer
 ): Promise<Customer> => {
   try {
-    const response = await axios.post(customerUrl + "/post", customer);
+    const response = await axios.post(baseURL + "/post", customer);
     return response.data;
   } catch (error) {
     console.error("Error en addCustomers:", error);
@@ -26,7 +26,7 @@ export const addCustomerFromDataBase = async (
 
 export const editCustomerFromDataBase = async (customer: Customer) => {
   try {
-    const response = await axios.put(customerUrl + "/put", customer);
+    const response = await axios.put(baseURL + "/put", customer);
     return response.data;
   } catch (error) {
     console.error("Error en editCustomers:", error);

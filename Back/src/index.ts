@@ -1,10 +1,16 @@
 import express from 'express'
 import cors from "cors";
 
-import deleteproduct from './rutas/delete_productos'
-import putproduct from './rutas/put_productos'
-import getproduct from './rutas/get_productos'
-import postproduct from './rutas/post_productos'
+import { 
+    delete_product,
+    put_product,
+    get_product,
+    post_product
+} from './rutas/productos/productos'
+
+import {} from './rutas/clientes/clientes'
+import{}from './rutas/facturas/facturas'
+import{}from './rutas/usuarios/usuario'
 
 const app= express()
 
@@ -17,10 +23,10 @@ const PORT = 3000
 
 
 
-app.use('/api/delete',deleteproduct)
-app.use('/api/put',putproduct)
-app.use('/api/post',postproduct)
-app.use('/api/get',getproduct)
+app.use('/api/delete',delete_product)
+app.use('/api/put',put_product)
+app.use('/api/post',post_product)
+app.use('/api/get',get_product)
 
 app.get('/ping', (_req,res)=>{
     console.log('PING')

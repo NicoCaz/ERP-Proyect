@@ -1,10 +1,10 @@
 import axios from "axios";
 import { Invoice, ProductInvoice } from "../../types/invoice";
-import {  invoiceUrl } from "./config";
+import {  baseURL } from "./config";
 
 export const getInvoicesFromDataBase = async () => {
   try {
-    const response = await axios.get(invoiceUrl + "/get");
+    const response = await axios.get(baseURL + "/get");
     return response.data;
   } catch (error) {
     console.error("Error en getinvoices:", error);
@@ -14,7 +14,7 @@ export const getInvoicesFromDataBase = async () => {
 
 export const getInvoiceFromDataBaseById = async (Id:number) => {
   try {
-    const response = await axios.get(invoiceUrl + "/getbyid", { params: { Id } });
+    const response = await axios.get(baseURL + "/getbyid", { params: { Id } });
     return response.data;
   } catch (error) {
     console.error("Error en getinvoices:", error);
@@ -27,7 +27,7 @@ export const addInvoicesFromDataBase = async (
   invoice: Invoice
 ): Promise<Invoice> => {
   try {
-    const response = await axios.post(invoiceUrl + "/post", invoice);
+    const response = await axios.post(baseURL + "/post", invoice);
     return response.data;
   } catch (error) {
     console.error("Error en addinvoices:", error);
@@ -37,7 +37,7 @@ export const addInvoicesFromDataBase = async (
 
 export const editInvoiceFromDataBase = async (invoice: Invoice) => {
   try {
-    const response = await axios.put(invoiceUrl+ "/put", invoice);
+    const response = await axios.put(baseURL+ "/put", invoice);
     return response.data;
   } catch (error) {
     console.error("Error en editInvoices:", error);
@@ -48,7 +48,7 @@ export const editInvoiceFromDataBase = async (invoice: Invoice) => {
 
 export const addInvoiceProductFromDataBase = async (productInvoice: ProductInvoice, InvoiceId: number) => {
   try {
-    const response = await axios.put(invoiceUrl + "/post/product", {productInvoice,InvoiceId } );
+    const response = await axios.put(baseURL + "/post/product", {productInvoice,InvoiceId } );
     return response.data;
   } catch (error) {
     console.error("Error en editInvoices:", error);
@@ -58,7 +58,7 @@ export const addInvoiceProductFromDataBase = async (productInvoice: ProductInvoi
 
 export const editInvoiceProductFromDataBase = async (productInvoice: ProductInvoice, InvoiceId: number) => {
   try {
-    const response = await axios.put(invoiceUrl + "/put/product", {productInvoice,InvoiceId } );
+    const response = await axios.put(baseURL + "/put/product", {productInvoice,InvoiceId } );
     return response.data;
   } catch (error) {
     console.error("Error en editInvoices:", error);
@@ -68,7 +68,7 @@ export const editInvoiceProductFromDataBase = async (productInvoice: ProductInvo
 
 export const removeInvoiceProductFromDataBase = async (productId: number, InvoiceId: number) => {
   try {
-    const response = await axios.delete(`${invoiceUrl}/put/product?productId=${productId}&InvoiceId=${InvoiceId}`);
+    const response = await axios.delete(`${baseURL}/put/product?productId=${productId}&InvoiceId=${InvoiceId}`);
     return response.data;
   } catch (error) {
     console.error("Error en editInvoices:", error);
@@ -77,7 +77,7 @@ export const removeInvoiceProductFromDataBase = async (productId: number, Invoic
 }
 export const removeInvoiceFromDataBase = async ( InvoiceId: number) => {
   try {
-    const response = await axios.delete(invoiceUrl+"/delete", { params: { InvoiceId } });
+    const response = await axios.delete(baseURL+"/delete", { params: { InvoiceId } });
     return response.data;
   } catch (error) {
     console.error("Error en editInvoices:", error);

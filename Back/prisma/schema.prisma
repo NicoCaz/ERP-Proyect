@@ -15,7 +15,7 @@ model Product{
   Id Int @id @default(autoincrement())
   Name String @unique
   Price Float
-  Quantitya Int @default(1)
+  Quantity Int @default(1)
 }
 ///////////////////////////////////////////////
 model Invoice {
