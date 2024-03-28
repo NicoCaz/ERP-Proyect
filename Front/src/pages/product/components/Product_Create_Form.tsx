@@ -8,7 +8,6 @@ interface Product_Create_Form_Props {
 const Product_Create_Form: React.FC<Product_Create_Form_Props> = ({
   onClose,
 }) => {
-  // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({
     Id: null,
     Name: "",
@@ -16,80 +15,82 @@ const Product_Create_Form: React.FC<Product_Create_Form_Props> = ({
   });
 
   const { addProduct } = useStore();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Manejar cambios en los campos del formulario
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.Name.trim() === "") {
+      setErrors((prevErrors) => ({ ...prevErrors, Name: "Nombre es requerido" }));
+      return;
+    }
+    if (formData.Price <= 0 || formData.Price.toString().startsWith("0")) {
+      setErrors((prevErrors) => ({ ...prevErrors, Price: "Precio debe ser mayor que cero y no empezar con cero" }));
+      return;
+    }
     try {
       addProduct(formData);
       onClose();
     } catch (error) {
       console.error(error);
     }
-    console.log("Datos del formulario:", formData);
-    onClose();
   };
 
   const handleCancel = (e: React.FormEvent) => {
     e.preventDefault();
     onClose();
   };
+
   return (
-    <form className="max-w-3xl grid gap-2 py-10 px-8 sm:grid-cols-2 bg-white rounded-md">
-      <div className="grid">
-        <div className="bg-white flex min-h-[60px] flex-col-reverse justify-center rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:shadow-inner">
-          <input
-            type="text"
-            name="Name"
-            id="Name"
-            value={formData.Name}
-            onChange={handleChange}
-            className="peer block w-full border-0 p-0 text-base text-gray-900 placeholder-gray-400 focus:ring-1"
-          />
-          <label
-            htmlFor="Name"
-            className="block transform text-xs font-bold uppercase text-gray-400 transition-opacity, duration-200 peer-placeholder-shown:h-0 peer-placeholder-shown:-translate-y-full peer-placeholder-shown:opacity-0"
-          >
-            Nombre
-          </label>
-        </div>
+    <form className="max-w-3xl grid gap-4 py-10 px-8 sm:grid-cols-2 bg-white rounded-md shadow-lg">
+      <div className="flex flex-col">
+        <label htmlFor="Name" className="text-sm font-semibold text-gray-700 mb-1">
+          Nombre
+        </label>
+        <input
+          type="text"
+          name="Name"
+          id="Name"
+          value={formData.Name}
+          onChange={handleChange}
+          className={`border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 ${
+            errors.Name ? "ring-red-500" : "focus:ring-blue-500"
+          }`}
+        />
+        {errors.Name && <span className="text-red-500 text-sm">{errors.Name}</span>}
       </div>
-      <div className="grid">
-        <div className="bg-white flex min-h-[60px] flex-col-reverse justify-center rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:shadow-inner">
-          <input
-            type="number"
-            name="Price"
-            id="Price"
-            value={formData.Price}
-            onChange={handleChange}
-            className="peer block w-full border-0 p-0 number-base text-gray-900 placeholder-gray-400 focus:ring-0 pl"
-          />
-          <label
-            htmlFor="Price"
-            className="block transform text-xs font-bold uppercase text-gray-400 transition-opacity, duration-200 peer-placeholder-shown:h-0 peer-placeholder-shown:-translate-y-full peer-placeholder-shown:opacity-0"
-          >
-            Precio
-          </label>
-        </div>
+      <div className="flex flex-col">
+        <label htmlFor="Price" className="text-sm font-semibold text-gray-700 mb-1">
+          Precio
+        </label>
+        <input
+          type="number"
+          name="Price"
+          id="Price"
+          value={formData.Price}
+          onChange={handleChange}
+          className={`border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 ${
+            errors.Price ? "ring-red-500" : "focus:ring-blue-500"
+          }`}
+        />
+        {errors.Price && <span className="text-red-500 text-sm">{errors.Price}</span>}
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex justify-center">
         <button
           type="submit"
-          className="mt-4 bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-700 "
+          className="mt-6 bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
           onClick={handleSubmit}
         >
           Aceptar
         </button>
-      </div>
-      <div className="flex items-center justify-center">
         <button
-          type="submit"
-          className="mt-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-700 "
+          type="button"
+          className="mt-6 ml-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           onClick={handleCancel}
         >
           Cancelar

@@ -2,19 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useStore } from "../../../contexts/StoreContext";
 import { Product } from "../../../../types/product";
 
-interface Product_Edit_Form_Props {
+interface Product_Delete_Form_Props {
   product: Product;
   onClose: Function;
 }
 
-const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({ product, onClose }) => {
+const Product_Delete_Form: React.FC<Product_Delete_Form_Props> = ({ product, onClose }) => {
   const [formData, setFormData] = useState({
     Id: product.Id,
     Name: product.Name,
     Price: product.Price,
   });
 
-  const { editProduct } = useStore();
+  const { deletedProduct } = useStore();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({ product, onClose
       return;
     }
     try {
-      editProduct(formData); // Llama a la función de edición específica para el producto
+      deletedProduct(formData); 
       onClose();
     } catch (error) {
       console.error(error);
@@ -108,4 +108,4 @@ const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({ product, onClose
   );
 };
 
-export default Product_Edit_Form;
+export default Product_Delete_Form;

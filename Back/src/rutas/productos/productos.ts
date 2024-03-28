@@ -66,7 +66,10 @@ export const post_product =router.post("/", async (req, res) => {
     try {
         const actProduct = await prisma.product.update({
             where: {Id:req.body.Id},
-            data:req.body
+            data:{
+                Name: req.body.Name,
+                Price: parseFloat(req.body.Price),
+            }
         })
         res.json(actProduct)
     } catch (error) {

@@ -33,3 +33,13 @@ export const editProductFromDataBase = async (product: Product) => {
     throw error;
   }
 };
+
+export const deletedProductFromDataBase = async (product: Product) => {
+  try {
+    const response = await axios.put(baseURL + "/delete", product);
+    return response.data;
+  } catch (error) {
+    console.error("Error en editProduct:", error);
+    throw error;
+  }
+};

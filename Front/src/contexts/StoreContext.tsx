@@ -10,6 +10,7 @@ import {
 
 import {
   addProductFromDataBase,
+  deletedProductFromDataBase,
   editProductFromDataBase,
   getProductsFromDataBase,
 } from "../apis/apis_products";
@@ -23,6 +24,7 @@ interface StoreContextProps {
   editCustomer: (customer: Customer) => void;
   addProduct: (product: Product) => void;
   editProduct: (product: Product) => void;
+  deletedProduct: (product: Product) => void;
   addInvoice: (invoice: Invoice) => void;
 }
 
@@ -33,6 +35,7 @@ const StoreContext = createContext<StoreContextProps>({
   addCustomer: () => {},
   editCustomer: () => {},
   addProduct: () => {},
+  deletedProduct: () => {},
   editProduct: () => {},
   addInvoice: () => {},
 });
@@ -134,6 +137,16 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
       console.error("Error al editar un cliente:", error);
     }
   };
+  const deletedProduct = (deletedProduct: Product) => {
+    try {
+      deletedProductFromDataBase(deletedProduct);
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.Id !== deletedProduct.Id)
+      );
+    } catch (error) {
+      console.error("Error al eliminar un producto:", error);
+    }
+  };
   ////////////////////////////////////////////////////////////////////////////
 
   const loadCurentInvoice = (invoice:Invoice) => {
@@ -227,7 +240,9 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     editCustomer,
     addProduct,
     editProduct,
-    addInvoice, 
+    deletedProduct,
+    addInvoice,
+
   };
 
   return (
