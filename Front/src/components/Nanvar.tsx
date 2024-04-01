@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { getCustomers } from "../apis/apis_customers";
-
 interface Navlink {
   name: string;
   link: string;

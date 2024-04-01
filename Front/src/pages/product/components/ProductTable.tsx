@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState }  from "react";
 import { useStore } from "../../../contexts/StoreContext";
 import { Product } from "../../../../types/product";
 
@@ -36,8 +36,13 @@ const TableRow: React.FC<{ product: Product; onClickEditModal: (product: Product
   </tr>
 );
 
-const ProductsTable: React.FC<ProductsTableProps> = ({ onClickEditModal, onClickCreateModal,onClickDeleteModal }) => {
+const ProductsTable: React.FC<ProductsTableProps> = ({ onClickEditModal, onClickCreateModal, onClickDeleteModal }) => {
   const { products } = useStore();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredProducts = products.filter(product =>
+    product.Name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="max-w-screen-lg mx-auto p-4 bg-gray-100 dark:bg-gray-800">
@@ -63,6 +68,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onClickEditModal, onClick
               id="table-search"
               className="bg-gray-100 dark:bg-gray-700 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 placeholder-gray-400"
               placeholder="Buscar productos"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button
@@ -84,7 +91,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onClickEditModal, onClick
               </tr>
             </thead>
             <tbody>
-              {products.map((product, index) => (
+              {filteredProducts.map((product, index) => (
                 <TableRow key={product.Id} product={product} onClickEditModal={onClickEditModal} onClickDeleteModal={onClickDeleteModal} index={index} />
               ))}
             </tbody>
@@ -94,5 +101,6 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onClickEditModal, onClick
     </div>
   );
 };
+
 
 export default ProductsTable;

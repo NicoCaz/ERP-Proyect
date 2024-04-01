@@ -31,6 +31,7 @@ const ProductsPage: React.FC = () => {
    const closeModal = () => {
      setIsEditModalOpen(false);
      setIsCreateModalOpen(false);
+     setIsDeletedModalOpen(false);
    };
  
 

@@ -10,7 +10,7 @@ import {
 
 import {
   addProductFromDataBase,
-  deletedProductFromDataBase,
+  deleteProductFromDatabase,
   editProductFromDataBase,
   getProductsFromDataBase,
 } from "../apis/apis_products";
@@ -139,7 +139,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   };
   const deletedProduct = (deletedProduct: Product) => {
     try {
-      deletedProductFromDataBase(deletedProduct);
+      deleteProductFromDatabase(deletedProduct);
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.Id !== deletedProduct.Id)
       );

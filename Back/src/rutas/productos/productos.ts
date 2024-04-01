@@ -4,33 +4,39 @@ const prisma = new PrismaClient();
 const router = express.Router();
 
 
-export const delete_product = router.delete('/:id', async (req, res) => {
-    const id = parseInt(req.params.id);
-
-    // Check if id is a number
+export const delete_product =router.delete('/:id', async (req, res) => {
+    const id = parseInt(req.params.id); // Obtener el ID desde los parámetros de la ruta
+    console.log("delete product");
     if (isNaN(id)) {
-        return res.status(400).json({ error: 'Invalid product ID' });
+      return res.status(400).json({ error: 'Invalid product ID' });
     }
-
+  
     try {
-        const product = await prisma.product.findUnique({ where: { Id: id } });
-
-        // Check if product exists
-        if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-
-        const deleteProduct = await prisma.product.delete({ where: { Id: id } });
-        return res.json(deleteProduct);
+      const product = await prisma.product.findUnique({
+        where: { Id: id } // Usar 'id' en minúscula
+      });
+  
+      // Check if product exists
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+  
+      const deletedProduct = await prisma.product.delete({
+        where: { Id: id } // Usar 'id' en minúscula
+      });
+  
+      return res.json(deletedProduct);
     } catch (error: any) {
         // Provide more detailed error message
         return res.status(500).json({ error: `Failed to delete product: ${error.message}` });
     }
-});
+  });
 
 
 export const get_product = router.get('/', async (_req, res) => {
+    console.log("get product");
     try {
+
         const listProduct = await prisma.product.findMany();
         res.json(listProduct);
     } catch (error) {
@@ -41,8 +47,8 @@ export const get_product = router.get('/', async (_req, res) => {
 
 
 
-
 export const post_product =router.post("/", async (req, res) => {
+    console.log("post product");
     console.log(req.body);
     try {
         console.log(req.body);

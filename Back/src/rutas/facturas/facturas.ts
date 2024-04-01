@@ -29,7 +29,7 @@ export const delete_factura = router.delete('/facturas/:id', async (req, res) =>
         return res.status(204).send();
     } catch (error: any) {
       // Provide more detailed error message
-      res.status(500).json({ error: `Failed to delete invoice: ${error.message}` });
+      return res.status(500).json({ error: `Failed to delete invoice: ${error.message}` });
     }
 });
 
@@ -68,10 +68,10 @@ export const get_factura=router.get('/facturas/:id', async (req, res) => {
       return res.status(404).json({ message: 'Factura no encontrada' });
     }
 
-    res.status(200).json(factura);
+    return res.status(200).json(factura);
   } catch (error) {
     console.error('Error al obtener la factura:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    return  res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
@@ -146,9 +146,9 @@ export const put_factura=router.put('/facturas/:id', async (req, res) => {
       },
     });
 
-    res.status(200).json(facturaActualizada);
+    return res.status(200).json(facturaActualizada);
   } catch (error) {
     console.error('Error al actualizar la factura:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    return  res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
