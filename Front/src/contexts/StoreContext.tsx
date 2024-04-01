@@ -6,6 +6,7 @@ import {
   getCustomersFromDataBase,
   editCustomerFromDataBase,
   addCustomerFromDataBase,
+  deleteCustomerFromDataBase,
 } from "../apis/apis_customers";
 
 import {
@@ -14,7 +15,14 @@ import {
   editProductFromDataBase,
   getProductsFromDataBase,
 } from "../apis/apis_products";
-import { addInvoiceProductFromDataBase, addInvoicesFromDataBase, editInvoiceFromDataBase, editInvoiceProductFromDataBase, getInvoicesFromDataBase, removeInvoiceProductFromDataBase } from "../apis/apis_invoices";
+import { 
+  addInvoiceProductFromDataBase,
+   addInvoicesFromDataBase, 
+   editInvoiceFromDataBase, 
+   editInvoiceProductFromDataBase, 
+   getInvoicesFromDataBase, 
+   removeInvoiceProductFromDataBase 
+  } from "../apis/apis_invoices";
 
 interface StoreContextProps {
   customers: Customer[];
@@ -22,6 +30,7 @@ interface StoreContextProps {
   invoices: Invoice[];
   addCustomer: (customer: Customer) => void;
   editCustomer: (customer: Customer) => void;
+  deleteCustomer: (customer: Customer) => void;
   addProduct: (product: Product) => void;
   editProduct: (product: Product) => void;
   deletedProduct: (product: Product) => void;
@@ -32,12 +41,13 @@ const StoreContext = createContext<StoreContextProps>({
   customers: [],
   products: [],
   invoices: [],
-  addCustomer: () => {},
-  editCustomer: () => {},
-  addProduct: () => {},
-  deletedProduct: () => {},
-  editProduct: () => {},
-  addInvoice: () => {},
+  addCustomer: () => { },
+  editCustomer: () => { },
+  deleteCustomer: () => { },
+  addProduct: () => { },
+  deletedProduct: () => { },
+  editProduct: () => { },
+  addInvoice: () => { },
 });
 
 export const useStore = () => useContext(StoreContext);
@@ -109,6 +119,14 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
       );
     } catch (error) {
       console.error("Error al editar un cliente:", error);
+    }
+  };
+  const deleteCustomer = (customerDelted: Customer) => {
+    try {
+      deleteCustomerFromDataBase(customerDelted);
+      setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer.Id !== customerDelted.Id));
+    } catch (error) {
+      console.error('Error al eliminar un cliente:', error);
     }
   };
 
@@ -238,6 +256,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     invoices,
     addCustomer,
     editCustomer,
+    deleteCustomer,
     addProduct,
     editProduct,
     deletedProduct,

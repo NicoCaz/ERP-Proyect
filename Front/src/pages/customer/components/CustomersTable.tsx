@@ -1,22 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
 import { useStore } from "../../../contexts/StoreContext";
+import { Customer } from "../../../../types/customer";
 
 interface CustomersTableProps {
-  onClickEditModal: Function;
-  onClickCreateModal: Function;
-}
+  onClickEditModal: (customer: Customer) => void;
+  onClickDeleteModal: (customer: Customer) => void;
+  onClickCreateModal: () => void;
 
-const CustomersTable: React.FC<CustomersTableProps> = ({
-  onClickEditModal,
-  onClickCreateModal,
-}) => {
+}
+const TableRow: React.FC<{ customer: Customer; onClickEditModal: (customer: Customer) => void; onClickDeleteModal: (customer: Customer) => void; index: number }> = ({ customer, onClickEditModal, onClickDeleteModal, index }) => (
+  <tr
+    key={customer.Id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white dark:bg-gray-800"
+        : "bg-gray-100 dark:bg-gray-700"
+    } hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-md`}
+  >
+    <td className="py-2 pl-4 font-medium text-left">{customer.Name}</td>
+    <td className="py-2 text-left">{customer.Address}</td>
+    <td className="py-2 pr-4 text-right">
+      <button
+        className="bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-700 transition-colors mr-2"
+        onClick={() => onClickEditModal(customer)}
+      >
+        Editar
+      </button>
+      <button
+        className="bg-red-500 text-white py-1 px-4 rounded-md hover:bg-red-700 transition-colors"
+        onClick={() => onClickDeleteModal(customer!)}
+      >
+        Eliminar
+      </button>
+    </td>
+  </tr>
+);
+
+
+const CustomersTable: React.FC<CustomersTableProps> = ({ onClickEditModal, onClickCreateModal, onClickDeleteModal }) => {
   const { customers } = useStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Número de productos por página
+
+  const filteredCustomer = customers.filter(customer =>
+    customer.Name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCustomers = filteredCustomer.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredCustomer.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 bg-gray-100 dark:bg-gray-800">
-      <div className="bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
+    <div className="max-w-screen-lg mx-auto p-4 bg-gray-100 dark:bg-gray-800">
+      <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-lg rounded-lg">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-600">
-          <div className="relative">
+          <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
                 className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -28,66 +73,93 @@ const CustomersTable: React.FC<CustomersTableProps> = ({
                   fillRule="evenodd"
                   d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                   clipRule="evenodd"
-                ></path>
+                />
               </svg>
             </div>
             <input
               type="text"
               id="table-search"
               className="bg-gray-100 dark:bg-gray-700 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 placeholder-gray-400"
-              placeholder="Buscar clientes"
+              placeholder="Buscar productos"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button
-            className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-700"
-            onClick={() => onClickCreateModal()}
+            className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors"
+            onClick={onClickCreateModal}
           >
             Agregar Cliente
           </button>
         </div>
-        <table className="w-full text-sm text-gray-800 dark:text-white">
-          <thead className="text-xs uppercase bg-gray-200 dark:bg-gray-700">
-            <tr>
-              <th scope="col" className="py-3 pl-4 text-left">
-                Clientes
-              </th>
-              <th scope="col" className="py-3 text-left">
-                Dirección
-              </th>
-              <th scope="col" className="py-3 pr-4 text-right">
-                <span className="sr-only">Editar</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.map((customer, index) => (
-              <tr
-                key={customer.Id}
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white dark:bg-gray-800"
-                    : "bg-gray-100 dark:bg-gray-700"
-                } hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-md`}
-              >
-                <td className="py-4 pl-4 font-medium text-left">
-                  {customer.Name}
-                </td>
-                <td className="py-4 text-left">{customer.Address}</td>
-                <td className="py-4 pr-4 text-right">
-                  <button
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                    onClick={() => onClickEditModal(customer)}
-                  >
-                    Editar
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full table-auto text-sm text-gray-800 dark:text-white">
+            <thead className="text-xs uppercase bg-gray-200 dark:bg-gray-700">
+              <tr>
+                <th className="py-2 pl-4 text-left">Nombre</th>
+                <th className="py-2 text-left">Precio</th>
+                <th className="py-2 pr-4 text-right">
+                  <span className="sr-only">Editar</span>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentCustomers.map((customer, index) => (
+                <TableRow
+                  key={customer.Id}
+                  customer={customer}
+                  onClickEditModal={onClickEditModal}
+                  onClickDeleteModal={onClickDeleteModal}
+                  index={index}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex justify-center mt-4">
+          <nav aria-label="Paginación">
+            <ul className="flex list-style-none">
+              <li>
+                <button
+                  className={`py-2 px-3 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                    currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  Anterior
+                </button>
+              </li>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li key={i}>
+                  <button
+                    className={`py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                      currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
+                    }`}
+                    onClick={() => handlePageChange(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  className={`py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                    currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Siguiente
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   );
 };
+
 
 export default CustomersTable;

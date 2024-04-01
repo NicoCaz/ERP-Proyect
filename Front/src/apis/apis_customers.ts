@@ -4,7 +4,7 @@ import { baseURL } from "./config";
 
 export const getCustomersFromDataBase = async () => {
   try {
-    const response = await axios.get(baseURL + "/get");
+    const response = await axios.get(baseURL + "/cliente/get");
     return response.data;
   } catch (error) {
     console.error("Error en getCustomers:", error);
@@ -16,7 +16,7 @@ export const addCustomerFromDataBase = async (
   customer: Customer
 ): Promise<Customer> => {
   try {
-    const response = await axios.post(baseURL + "/post", customer);
+    const response = await axios.post(baseURL + "/cliente/post", customer);
     return response.data;
   } catch (error) {
     console.error("Error en addCustomers:", error);
@@ -26,10 +26,19 @@ export const addCustomerFromDataBase = async (
 
 export const editCustomerFromDataBase = async (customer: Customer) => {
   try {
-    const response = await axios.put(baseURL + "/put", customer);
+    const response = await axios.put(baseURL + "/cliente/put", customer);
     return response.data;
   } catch (error) {
     console.error("Error en editCustomers:", error);
+    throw error;
+  }
+};
+export const deleteCustomerFromDataBase = async (customer: Customer) => {
+  try {
+    const response = await axios.delete(`${baseURL}/cliente/delete/${customer.Id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error en deleteCustomer:", error);
     throw error;
   }
 };

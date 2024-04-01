@@ -7,7 +7,10 @@ interface Product_Edit_Form_Props {
   onClose: Function;
 }
 
-const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({ product, onClose }) => {
+const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({ 
+  product, 
+  onClose 
+}) => {
   const [formData, setFormData] = useState({
     Id: product.Id,
     Name: product.Name,
