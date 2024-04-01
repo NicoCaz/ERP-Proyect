@@ -39,10 +39,22 @@ const TableRow: React.FC<{ product: Product; onClickEditModal: (product: Product
 const ProductsTable: React.FC<ProductsTableProps> = ({ onClickEditModal, onClickCreateModal, onClickDeleteModal }) => {
   const { products } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Número de productos por página
 
   const filteredProducts = products.filter(product =>
     product.Name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="max-w-screen-lg mx-auto p-4 bg-gray-100 dark:bg-gray-800">
@@ -91,16 +103,61 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onClickEditModal, onClick
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((product, index) => (
-                <TableRow key={product.Id} product={product} onClickEditModal={onClickEditModal} onClickDeleteModal={onClickDeleteModal} index={index} />
+              {currentProducts.map((product, index) => (
+                <TableRow
+                  key={product.Id}
+                  product={product}
+                  onClickEditModal={onClickEditModal}
+                  onClickDeleteModal={onClickDeleteModal}
+                  index={index}
+                />
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="flex justify-center mt-4">
+          <nav aria-label="Paginación">
+            <ul className="flex list-style-none">
+              <li>
+                <button
+                  className={`py-2 px-3 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                    currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  Anterior
+                </button>
+              </li>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li key={i}>
+                  <button
+                    className={`py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                      currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
+                    }`}
+                    onClick={() => handlePageChange(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  className={`py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                    currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Siguiente
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
   );
 };
-
 
 export default ProductsTable;
