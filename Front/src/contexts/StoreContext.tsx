@@ -35,6 +35,8 @@ interface StoreContextProps {
   editProduct: (product: Product) => void;
   deletedProduct: (product: Product) => void;
   addInvoice: (invoice: Invoice) => void;
+  editInvoice: (invoice: Invoice) => void;
+  deletedInvoice: (invoice: Invoice) => void;
 }
 
 const StoreContext = createContext<StoreContextProps>({
@@ -48,6 +50,8 @@ const StoreContext = createContext<StoreContextProps>({
   deletedProduct: () => { },
   editProduct: () => { },
   addInvoice: () => { },
+  editInvoice: () => { }, 
+  deletedInvoice: () => { }, 
 });
 
 export const useStore = () => useContext(StoreContext);
@@ -199,6 +203,21 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     }
   };
 
+  const deletedInvoice = (updatedInvoice: Invoice) => {
+    try {
+      editInvoiceFromDataBase(updatedInvoice);
+      setInvoices((prevInvoices) =>
+      prevInvoices.map((invoice) =>
+        invoice.Id === updatedInvoice.Id
+            ? { ...invoice, ...updatedInvoice }
+            : invoice
+        )
+      );
+    } catch (error) {
+      console.error("Error al editar un cliente:", error);
+    }
+  };
+
   const addProductToInvoice = (productInvoice: ProductInvoice,invoiceId:number) => {
     try {
       addInvoiceProductFromDataBase(productInvoice,invoiceId);
@@ -261,7 +280,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     editProduct,
     deletedProduct,
     addInvoice,
-
+    editInvoice,
+    deletedInvoice,
   };
 
   return (

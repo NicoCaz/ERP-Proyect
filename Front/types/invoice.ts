@@ -2,7 +2,7 @@ export interface Invoice {
  
   Id: number | null;
   Date: Date;
-  ClientId: number;
+  ClientId: number | null;
   Products: ProductInvoice[];
   Total: number;
 }

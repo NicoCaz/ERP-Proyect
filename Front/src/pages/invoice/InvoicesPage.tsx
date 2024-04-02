@@ -4,27 +4,36 @@ import { useState } from "react";
 import { Customer } from "../../../types/customer";
 import Invoice_Create_Form from "./components/Invoice_Create_Form";
 import Invoice_Edit_Form from "./components/Invoice_Edit_Form";
+import { Invoice } from "../../../types/invoice";
 
 const InvoicesPage: React.FC = () => {
   // ------ State --------
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeletedModalOpen] = useState(false);
 
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer>();
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice>();
 
   // ------ Effects --------
 
   // ------ Functions --------
-  const openEditModal = (customer: Customer) => {
-    setSelectedCustomer(customer);
+  const openEditModal = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
     setIsEditModalOpen(true);
   };
   const openCreateModal = () => {
     setIsCreateModalOpen(true);
   };
+  const openDeleteModal = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setIsDeletedModalOpen(true);
+  };
+
+
   const closeModal = () => {
     setIsEditModalOpen(false);
     setIsCreateModalOpen(false);
+    setIsDeletedModalOpen(false);
   };
 
   return (
@@ -33,7 +42,7 @@ const InvoicesPage: React.FC = () => {
       {isEditModalOpen && (
         <Modal onClose={closeModal}>
           <Invoice_Edit_Form
-            customer={selectedCustomer!}
+            invoice={selectedInvoice!}
             onClose={closeModal}
           ></Invoice_Edit_Form>
         </Modal>

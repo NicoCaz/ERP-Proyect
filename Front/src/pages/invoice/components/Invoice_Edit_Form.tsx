@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Customer } from "../../../../types/customer";
 import { useStore } from "../../../contexts/StoreContext";
+import { Invoice } from "../../../../types/invoice";
 
 interface Invoice_Edit_Form_Props {
-  customer: Customer;
+  invoice: Invoice;
   onClose: Function;
 }
 
 const Invoice_Edit_Form: React.FC<Invoice_Edit_Form_Props> = ({
-  customer,
+  invoice,
   onClose,
 }) => {
-  const [formData, setFormData] = useState<Customer>(customer);
-  const { editCustomer} = useStore();
+  const [formData, setFormData] = useState<Invoice>(invoice);
+  const { editInvoice} = useStore();
 
   useEffect(() => {
-    setFormData(customer);
-  }, [customer]);
+    setFormData(invoice);
+  }, [invoice]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,7 +27,7 @@ const Invoice_Edit_Form: React.FC<Invoice_Edit_Form_Props> = ({
   const handleSubmit = async(e: React.FormEvent) => {
     try {
       e.preventDefault();
-      editCustomer(formData)
+      editInvoice(formData)
       onClose();
     } catch (error) {}
   };
@@ -44,7 +45,7 @@ const Invoice_Edit_Form: React.FC<Invoice_Edit_Form_Props> = ({
             type="text"
             name="Name"
             id="Name"
-            value={formData.Name}
+            value={formData.ClientId!}
             onChange={handleChange}
             className="peer block w-full border-0 p-0 text-base text-gray-900 placeholder-gray-400 focus:ring-1"
           />
@@ -59,15 +60,15 @@ const Invoice_Edit_Form: React.FC<Invoice_Edit_Form_Props> = ({
       <div className="grid">
         <div className="bg-white flex min-h-[60px] flex-col-reverse justify-center rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:shadow-inner">
           <input
-            type="text"
-            name="Address"
-            id="Address"
-            value={formData.Address}
+            type="Date"
+            name="Date"
+            id="Date"
+            value={formData.Date.toString()}
             onChange={handleChange}
             className="peer block w-full border-0 p-0 number-base text-gray-900 placeholder-gray-400 focus:ring-0 pl"
           />
           <label
-            htmlFor="Address"
+            htmlFor="Date"
             className="block transform text-xs font-bold uppercase text-gray-400 transition-opacity, duration-200 peer-placeholder-shown:h-0 peer-placeholder-shown:-translate-y-full peer-placeholder-shown:opacity-0"
           >
             Direccion
