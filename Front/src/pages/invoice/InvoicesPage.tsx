@@ -2,7 +2,7 @@ import InvoicesTable from "./components/InvoicesTable";
 import Modal from "../../components/Modal";
 import { useState } from "react";
 import { Customer } from "../../../types/customer";
-import Invoice_Create_Form from "./components/Invoice_Create_Form";
+import Invoice_Create_Form from "./components/invoiceCreate/Invoice_Create_Form";
 import Invoice_Edit_Form from "./components/Invoice_Edit_Form";
 import { Invoice } from "../../../types/invoice";
 
