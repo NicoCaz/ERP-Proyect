@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
-import { useStore } from "../contexts/StoreContext";
-
+import { themeChange } from "theme-change";
 interface Navlink {
   name: string;
   link: string;
@@ -10,16 +9,14 @@ interface Navlink {
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [theme, setTheme] = useState("cupcake");
-  const { toggleTheme } = useStore();
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
   }, []);
 
   useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
+    themeChange(false);
+  }, []);
 
   const navlinks: Navlink[] = [
     { name: "Productos", link: "/products" },
@@ -106,7 +103,10 @@ const Navbar: React.FC = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <button onClick={toggleTheme}>Cambiar tema</button>
+        <select data-choose-theme>
+          <option value="cupcake">cupcake</option>
+          <option value="retro">retro</option>
+        </select>
       </div>
     </nav>
   );

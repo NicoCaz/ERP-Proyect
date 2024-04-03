@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Customer } from "../../types/customer";
 import { Product } from "../../types/product";
 import { Invoice, ProductInvoice } from "../../types/invoice";
+import { themeChange } from "theme-change";
+
 import {
   getCustomersFromDataBase,
   editCustomerFromDataBase,
@@ -15,20 +17,19 @@ import {
   editProductFromDataBase,
   getProductsFromDataBase,
 } from "../apis/apis_products";
-import { 
+import {
   addInvoiceProductFromDataBase,
-   addInvoicesFromDataBase, 
-   editInvoiceFromDataBase, 
-   editInvoiceProductFromDataBase, 
-   getInvoicesFromDataBase, 
-   removeInvoiceProductFromDataBase 
-  } from "../apis/apis_invoices";
+  addInvoicesFromDataBase,
+  editInvoiceFromDataBase,
+  editInvoiceProductFromDataBase,
+  getInvoicesFromDataBase,
+  removeInvoiceProductFromDataBase,
+} from "../apis/apis_invoices";
 
 interface StoreContextProps {
   customers: Customer[];
   products: Product[];
   invoices: Invoice[];
-  theme: string;
   addCustomer: (customer: Customer) => void;
   editCustomer: (customer: Customer) => void;
   deleteCustomer: (customer: Customer) => void;
@@ -38,14 +39,12 @@ interface StoreContextProps {
   addInvoice: (invoice: Invoice) => void;
   editInvoice: (invoice: Invoice) => void;
   deletedInvoice: (invoice: Invoice) => void;
-  toggleTheme: () => void;
 }
 
 const StoreContext = createContext<StoreContextProps>({
   customers: [],
   products: [],
   invoices: [],
-  theme: "cupcake",
   addCustomer: () => {},
   editCustomer: () => {},
   deleteCustomer: () => {},
@@ -55,7 +54,6 @@ const StoreContext = createContext<StoreContextProps>({
   addInvoice: () => {},
   editInvoice: () => {},
   deletedInvoice: () => {},
-  toggleTheme: () => {},
 });
 
 export const useStore = () => useContext(StoreContext);
@@ -75,16 +73,6 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const [editProductActInvoice, setEditProductActInvoice] = useState<
     ProductInvoice[]
   >([]);
-
-  const [theme, setTheme] = useState("cupcake");
-
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "cupcake" ? "retro" : "cupcake"));
-  };
 
   const handlerCustomers = async () => {
     try {
@@ -300,7 +288,6 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     customers,
     products,
     invoices,
-    theme,
     addCustomer,
     editCustomer,
     deleteCustomer,
@@ -310,7 +297,6 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     addInvoice,
     editInvoice,
     deletedInvoice,
-    toggleTheme,
   };
 
   return (
