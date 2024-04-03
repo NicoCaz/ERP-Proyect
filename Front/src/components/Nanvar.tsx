@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
+import { useStore } from "../contexts/StoreContext";
 
 interface Navlink {
   name: string;
@@ -8,20 +9,17 @@ interface Navlink {
 }
 
 const Navbar: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleDarkMode = useCallback(() => {
-    setIsDarkMode((prev) => !prev);
-  }, []);
+  const [theme, setTheme] = useState("cupcake");
+  const { toggleTheme } = useStore();
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle("dark", isDarkMode);
-  }, [isDarkMode]);
+    document.body.className = theme;
+  }, [theme]);
 
   const navlinks: Navlink[] = [
     { name: "Productos", link: "/products" },
@@ -108,9 +106,7 @@ const Navbar: React.FC = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <button onClick={toggleDarkMode} className="btn">
-          {isDarkMode ? "Modo claro" : "Modo oscuro"}
-        </button>
+        <button onClick={toggleTheme}>Cambiar tema</button>
       </div>
     </nav>
   );

@@ -28,6 +28,7 @@ interface StoreContextProps {
   customers: Customer[];
   products: Product[];
   invoices: Invoice[];
+  theme: string;
   addCustomer: (customer: Customer) => void;
   editCustomer: (customer: Customer) => void;
   deleteCustomer: (customer: Customer) => void;
@@ -37,21 +38,24 @@ interface StoreContextProps {
   addInvoice: (invoice: Invoice) => void;
   editInvoice: (invoice: Invoice) => void;
   deletedInvoice: (invoice: Invoice) => void;
+  toggleTheme: () => void;
 }
 
 const StoreContext = createContext<StoreContextProps>({
   customers: [],
   products: [],
   invoices: [],
-  addCustomer: () => { },
-  editCustomer: () => { },
-  deleteCustomer: () => { },
-  addProduct: () => { },
-  deletedProduct: () => { },
-  editProduct: () => { },
-  addInvoice: () => { },
-  editInvoice: () => { }, 
-  deletedInvoice: () => { }, 
+  theme: "cupcake",
+  addCustomer: () => {},
+  editCustomer: () => {},
+  deleteCustomer: () => {},
+  addProduct: () => {},
+  deletedProduct: () => {},
+  editProduct: () => {},
+  addInvoice: () => {},
+  editInvoice: () => {},
+  deletedInvoice: () => {},
+  toggleTheme: () => {},
 });
 
 export const useStore = () => useContext(StoreContext);
@@ -64,9 +68,23 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [actInvoice,setActInvoice]=useState<Invoice>();
-  const [productActInvoice,setProductActInvoice]=useState<ProductInvoice[]>([]);
-  const [editProductActInvoice,setEditProductActInvoice]=useState<ProductInvoice[]>([]);
+  const [actInvoice, setActInvoice] = useState<Invoice>();
+  const [productActInvoice, setProductActInvoice] = useState<ProductInvoice[]>(
+    []
+  );
+  const [editProductActInvoice, setEditProductActInvoice] = useState<
+    ProductInvoice[]
+  >([]);
+
+  const [theme, setTheme] = useState("cupcake");
+
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "cupcake" ? "retro" : "cupcake"));
+  };
 
   const handlerCustomers = async () => {
     try {
@@ -93,7 +111,6 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
       console.error("Error fetching data:", error);
     }
   };
-
 
   useEffect(() => {
     handlerCustomers();
@@ -128,9 +145,11 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const deleteCustomer = (customerDelted: Customer) => {
     try {
       deleteCustomerFromDataBase(customerDelted);
-      setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer.Id !== customerDelted.Id));
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter((customer) => customer.Id !== customerDelted.Id)
+      );
     } catch (error) {
-      console.error('Error al eliminar un cliente:', error);
+      console.error("Error al eliminar un cliente:", error);
     }
   };
 
@@ -171,7 +190,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   };
   ////////////////////////////////////////////////////////////////////////////
 
-  const loadCurentInvoice = (invoice:Invoice) => {
+  const loadCurentInvoice = (invoice: Invoice) => {
     try {
       setActInvoice(invoice);
       setProductActInvoice(invoice.Products);
@@ -192,8 +211,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     try {
       editInvoiceFromDataBase(updatedInvoice);
       setInvoices((prevInvoices) =>
-      prevInvoices.map((invoice) =>
-        invoice.Id === updatedInvoice.Id
+        prevInvoices.map((invoice) =>
+          invoice.Id === updatedInvoice.Id
             ? { ...invoice, ...updatedInvoice }
             : invoice
         )
@@ -207,8 +226,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     try {
       editInvoiceFromDataBase(updatedInvoice);
       setInvoices((prevInvoices) =>
-      prevInvoices.map((invoice) =>
-        invoice.Id === updatedInvoice.Id
+        prevInvoices.map((invoice) =>
+          invoice.Id === updatedInvoice.Id
             ? { ...invoice, ...updatedInvoice }
             : invoice
         )
@@ -218,10 +237,16 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     }
   };
 
-  const addProductToInvoice = (productInvoice: ProductInvoice,invoiceId:number) => {
+  const addProductToInvoice = (
+    productInvoice: ProductInvoice,
+    invoiceId: number
+  ) => {
     try {
-      addInvoiceProductFromDataBase(productInvoice,invoiceId);
-      setProductActInvoice((prevProdInvoices) => [...prevProdInvoices, productInvoice]);  
+      addInvoiceProductFromDataBase(productInvoice, invoiceId);
+      setProductActInvoice((prevProdInvoices) => [
+        ...prevProdInvoices,
+        productInvoice,
+      ]);
     } catch (error) {
       console.error("Error al crear un Product:", error);
     }
@@ -230,25 +255,28 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const updateInvoiceTotal = () => {
     try {
       let total = 0;
-    productActInvoice.forEach(product => {
-      total += product.Price * product.Quantity;
-    });
-    actInvoice!.Total = total;  
+      productActInvoice.forEach((product) => {
+        total += product.Price * product.Quantity;
+      });
+      actInvoice!.Total = total;
     } catch (error) {
-        console.error("Error al crear un Product:", error);
+      console.error("Error al crear un Product:", error);
     }
-    
   };
 
-  const editProductToInvoice = (productInvoice: ProductInvoice,invoiceId:number) => {
+  const editProductToInvoice = (
+    productInvoice: ProductInvoice,
+    invoiceId: number
+  ) => {
     try {
-      editInvoiceProductFromDataBase(productInvoice,invoiceId);
-      setEditProductActInvoice((prevProdInvoice) => 
-      prevProdInvoice.map((product) =>
+      editInvoiceProductFromDataBase(productInvoice, invoiceId);
+      setEditProductActInvoice((prevProdInvoice) =>
+        prevProdInvoice.map((product) =>
           product.Id === productInvoice.Id
             ? { ...product, ...productInvoice }
             : product
-        ))
+        )
+      );
       updateInvoiceTotal();
     } catch (error) {
       console.error("Error al crear un Product:", error);
@@ -268,11 +296,11 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
 
   ////////////////////////////////////////////////////////////////////////////
 
-
   const contextValue: StoreContextProps = {
     customers,
     products,
     invoices,
+    theme,
     addCustomer,
     editCustomer,
     deleteCustomer,
@@ -282,6 +310,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     addInvoice,
     editInvoice,
     deletedInvoice,
+    toggleTheme,
   };
 
   return (

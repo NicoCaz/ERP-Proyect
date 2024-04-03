@@ -7,9 +7,9 @@ interface Product_Edit_Form_Props {
   onClose: Function;
 }
 
-const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({ 
-  product, 
-  onClose 
+const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({
+  product,
+  onClose,
 }) => {
   const [formData, setFormData] = useState({
     Id: product.Id,
@@ -37,15 +37,21 @@ const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.Name.trim() === "") {
-      setErrors((prevErrors) => ({ ...prevErrors, Name: "Nombre es requerido" }));
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Name: "Nombre es requerido",
+      }));
       return;
     }
     if (formData.Price <= 0 || formData.Price.toString().startsWith("0")) {
-      setErrors((prevErrors) => ({ ...prevErrors, Price: "Precio debe ser mayor que cero y no empezar con cero" }));
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Price: "Precio debe ser mayor que cero y no empezar con cero",
+      }));
       return;
     }
     try {
-      editProduct(formData); // Llama a la función de edición específica para el producto
+      editProduct(formData);
       onClose();
     } catch (error) {
       console.error(error);
@@ -59,8 +65,11 @@ const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({
 
   return (
     <form className="max-w-3xl grid gap-4 py-10 px-8 sm:grid-cols-2 bg-white rounded-md shadow-lg">
-      <div className="flex flex-col">
-        <label htmlFor="Name" className="text-sm font-semibold text-gray-700 mb-1">
+      <div className="flex flex-col space-y-2">
+        <label
+          htmlFor="Name"
+          className="text-sm font-semibold text-gray-700 mb-1 text-center"
+        >
           Nombre
         </label>
         <input
@@ -69,39 +78,51 @@ const Product_Edit_Form: React.FC<Product_Edit_Form_Props> = ({
           id="Name"
           value={formData.Name}
           onChange={handleChange}
-          className={`border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 ${
-            errors.Name ? "ring-red-500" : "focus:ring-blue-500"
-          }`}
+          className={`input input-bordered ${errors.Name ? "input-error" : ""}`}
         />
-        {errors.Name && <span className="text-red-500 text-sm">{errors.Name}</span>}
+        {errors.Name && (
+          <span className="text-red-600 text-sm">{errors.Name}</span>
+        )}
       </div>
-      <div className="flex flex-col">
-        <label htmlFor="Price" className="text-sm font-semibold text-gray-700 mb-1">
+      <div className="flex flex-col space-y-2">
+        <label
+          htmlFor="Price"
+          className="text-sm font-semibold text-gray-700 mb-1 text-center"
+        >
           Precio
         </label>
         <input
-          type="number"
+          type="text"
           name="Price"
           id="Price"
           value={formData.Price}
-          onChange={handleChange}
-          className={`border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 ${
-            errors.Price ? "ring-red-500" : "focus:ring-blue-500"
+          onChange={(e) => {
+            // Solo permite números y dos decimales
+            if (/^\d*\.?\d{0,2}$/.test(e.target.value)) {
+              handleChange(e);
+            }
+          }}
+          className={`input input-bordered ${
+            errors.Price ? "input-error" : ""
           }`}
         />
-        {errors.Price && <span className="text-red-500 text-sm">{errors.Price}</span>}
+        {errors.Price && (
+          <span className="text-red-600 text-sm">{errors.Price}</span>
+        )}
       </div>
-      <div className="flex justify-center">
+      <div className="flex flex-col md:flex-row justify-center items-center mt-8 space-y-4 md:space-y-0 md:space-x-4">
         <button
           type="submit"
-          className="mt-6 bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="btn btn-primary w-full mt-6 transition duration-200 ease-in-out transform hover:scale-105"
           onClick={handleSubmit}
         >
           Aceptar
         </button>
+      </div>
+      <div className="flex flex-col md:flex-row justify-center items-center mt-8 space-y-4 md:space-y-0 md:space-x-4">
         <button
           type="button"
-          className="mt-6 ml-4 bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="btn btn-error w-full mt-6 transition duration-200 ease-in-out transform hover:scale-105"
           onClick={handleCancel}
         >
           Cancelar

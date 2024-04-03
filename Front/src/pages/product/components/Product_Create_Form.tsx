@@ -102,7 +102,7 @@ const Product_Create_Form: React.FC<Product_Create_Form_Props> = ({
       <div className="flex flex-col md:flex-row justify-center items-center mt-8 space-y-4 md:space-y-0 md:space-x-4">
         <button
           type="submit"
-          className="btn btn-primary w-full md:w-auto mt-6 transition duration-200 ease-in-out transform hover:scale-105"
+          className="btn btn-primary w-full mt-6 transition duration-200 ease-in-out transform hover:scale-105"
           onClick={handleSubmit}
         >
           Aceptar
@@ -111,7 +111,7 @@ const Product_Create_Form: React.FC<Product_Create_Form_Props> = ({
       <div className="flex flex-col md:flex-row justify-center items-center mt-8 space-y-4 md:space-y-0 md:space-x-4">
         <button
           type="button"
-          className="btn btn-error w-full md:w-auto mt-6 transition duration-200 ease-in-out transform hover:scale-105"
+          className="btn btn-error w-full mt-6 transition duration-200 ease-in-out transform hover:scale-105"
           onClick={handleCancel}
         >
           Cancelar
