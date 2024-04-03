@@ -10,9 +10,9 @@ const Modal = ({ children ,onClose}: ModalProps) => {
     onClose();
   };
   return (
-    <div className="w-screen h-screen fixed top-0 left-0 right-0 bottom-0 bg-black/50 backdrop-blur-sm  flex items-center justify-center"
+    <div className="fixed inset-0 flex items-center justify-center backdrop-blur"
       onClick={handleClose}>
-            <div className="bg-gray-50 rounded-lg" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-base-100 rounded-box shadow-xl p-6" onClick={(e) => e.stopPropagation()}>
 {children}</div>
     </div>
   );

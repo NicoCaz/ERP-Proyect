@@ -7,39 +7,44 @@ import Product_Edit_Form from "./components/Product_Edit_Form";
 import Product_Delete_Form from './components/Product_Delete_Form';
 
 const ProductsPage: React.FC = () => {
-   // ------ State --------
-   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-   const [isDeleteModalOpen, setIsDeletedModalOpen] = useState(false);
-   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
- 
-   const [selectedProduct, setSelectedProduct] = useState<Product>();
- 
-   // ------ Effects --------
- 
-   // ------ Functions --------
-   const openEditModal = (product: Product) => {
-     setSelectedProduct(product);
-     setIsEditModalOpen(true);
-   };
-   const openCreateModal = () => {
-     setIsCreateModalOpen(true);
-   };
-   const openDeleteModal = (product: Product) => {
+  // ------ State --------
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeletedModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState<Product>();
+
+  // ------ Effects --------
+
+  // ------ Functions --------
+  const openEditModal = (product: Product) => {
+    setSelectedProduct(product);
+    setIsEditModalOpen(true);
+  };
+  const openCreateModal = () => {
+    setIsCreateModalOpen(true);
+  };
+  const openDeleteModal = (product: Product) => {
     setSelectedProduct(product);
     setIsDeletedModalOpen(true);
   };
-   const closeModal = () => {
-     setIsEditModalOpen(false);
-     setIsCreateModalOpen(false);
-     setIsDeletedModalOpen(false);
-   };
- 
-
-
+  const closeModal = () => {
+    setIsEditModalOpen(false);
+    setIsCreateModalOpen(false);
+    setIsDeletedModalOpen(false);
+  };
 
   return (
-    <div>
-      <ProductsTable  onClickEditModal={openEditModal} onClickCreateModal={openCreateModal}   onClickDeleteModal={openDeleteModal} />
+    <div className="p-4">
+      <div className="flex items-center justify-center min-h-screen overflow-x-auto">
+        <div className="w-full sm:w-1/2 shadow-lg">
+          <ProductsTable
+            onClickEditModal={openEditModal}
+            onClickCreateModal={openCreateModal}
+            onClickDeleteModal={openDeleteModal}
+          />
+        </div>
+      </div>
       {isEditModalOpen && (
         <Modal onClose={closeModal}>
           <Product_Edit_Form
@@ -50,11 +55,10 @@ const ProductsPage: React.FC = () => {
       )}
       {isCreateModalOpen && (
         <Modal onClose={closeModal}>
-          <Product_Create_Form
-            onClose={closeModal}
-          ></Product_Create_Form>
+          <Product_Create_Form onClose={closeModal}></Product_Create_Form>
         </Modal>
-      )}{isDeleteModalOpen && (
+      )}
+      {isDeleteModalOpen && (
         <Modal onClose={closeModal}>
           <Product_Delete_Form
             product={selectedProduct!}
@@ -67,5 +71,3 @@ const ProductsPage: React.FC = () => {
 };
 
 export default ProductsPage;
-
-
