@@ -36,7 +36,7 @@ const ProductsPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <div className="flex items-center justify-center min-h-screen overflow-x-auto">
+      <div className="flex items-center justify-center min-h-screen overflow-x-auto mt-4">
         <div className="w-full sm:w-1/2 shadow-lg">
           <ProductsTable
             onClickEditModal={openEditModal}

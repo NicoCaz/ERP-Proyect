@@ -1,16 +1,22 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 
 interface Navlink {
   name: string;
   link: string;
+  sublinks?: Navlink[];
 }
 
 const Navbar: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleDarkMode = useCallback(() => {
     setIsDarkMode((prev) => !prev);
+  }, []);
+
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen((prev) => !prev);
   }, []);
 
   useEffect(() => {
@@ -26,8 +32,13 @@ const Navbar: React.FC = () => {
   return (
     <nav className="navbar bg-base-100 shadow-2xl">
       <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+        <div className="dropdown relative lg:hidden">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost"
+            onClick={toggleMenu}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -43,12 +54,46 @@ const Navbar: React.FC = () => {
               />
             </svg>
           </div>
+          {isMenuOpen && (
+            <ul className="menu bg-base-200 w-56 rounded-box absolute z-50">
+              {navlinks.map((element, index) => (
+                <li key={index}>
+                  {element.sublinks ? (
+                    <details open>
+                      <summary>{element.name}</summary>
+                      <ul>
+                        {element.sublinks.map((sublink, subIndex) => (
+                          <li key={subIndex}>
+                            <NavLink
+                              to={sublink.link}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition-colors duration-200"
+                              onClick={toggleMenu}
+                            >
+                              {sublink.name}
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  ) : (
+                    <NavLink
+                      to={element.link}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition-colors duration-200"
+                      onClick={toggleMenu}
+                    >
+                      {element.name}
+                    </NavLink>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <Link to="/" className="btn btn-ghost text-xl">
           DISDECO
         </Link>
       </div>
-      <div className="navbar-center hidden lg:flex">
+      <div className="navbar-center lg:flex hidden">
         <ul className="menu menu-horizontal px-1">
           {navlinks.map((element, index) => (
             <li key={index}>
